@@ -32,7 +32,7 @@ namespace ColorPlatform.Management
         {
             characterController = FindObjectOfType<CharacterController>();
             levelManager = new LevelManager(this);
-            platformManager = new PlatformManager(levelManager);
+            platformManager = new PlatformManager(this, levelManager);
             uiManager = new UIManager(this);
             
             platformManager.Init();

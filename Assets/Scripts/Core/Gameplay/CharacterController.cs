@@ -8,6 +8,8 @@ namespace ColorPlatform.Gameplay
     public class CharacterController : MonoBehaviour
     {
         [SerializeField, Range(0, 25f)] private float movementSpeed = default;
+        [SerializeField, Range(0, 250f)] private float jumpForce = default;
+        private Rigidbody rigidbodyComponent = default;
         private Animator animator = default;
         private GameManager gameManager = default;
 
@@ -15,6 +17,7 @@ namespace ColorPlatform.Gameplay
         {
             this.gameManager = currentGameManager;
             animator = GetComponent<Animator>();
+            rigidbodyComponent = GetComponent<Rigidbody>();
             gameManager.StateChanged += OnGameStateChanged;
         }
 
@@ -22,6 +25,16 @@ namespace ColorPlatform.Gameplay
         {
             if (gameManager.CurrentGameState != GameState.GamePlay) return;
             transform.Translate(transform.forward * (Time.deltaTime * movementSpeed));
+        }
+        
+        private void OnTriggerEnter(Collider other)
+        {
+            Platform platform = other.GetComponent<Platform>();
+            if (platform)
+            {
+                animator.SetTrigger($"Jump");
+                rigidbodyComponent.AddForce(Vector3.up * jumpForce);
+            }
         }
         
         private void OnGameStateChanged(GameState gameState)

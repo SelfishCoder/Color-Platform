@@ -10,6 +10,7 @@ namespace ColorPlatform.Gameplay
         private static PlatformManager current;
         public static PlatformManager Current => current;
         private LevelManager levelManager = default;
+        private GameManager gameManager = default;
         private PlatformColor selectedColor = default;
         private List<Platform> currentPlatforms = default;
         private FinishLine finishLine = default;
@@ -18,7 +19,7 @@ namespace ColorPlatform.Gameplay
 
         private PlatformManager(){}
         
-        public PlatformManager(LevelManager currentLevelManager)
+        public PlatformManager(GameManager currentGameManager, LevelManager currentLevelManager)
         {
             this.levelManager = currentLevelManager;
         }
@@ -44,6 +45,7 @@ namespace ColorPlatform.Gameplay
                 if (platform is null) continue;
                 currentPlatforms.Add(child.GetComponent<Platform>());
             }
+            SetPlatformsActiveWith(currentPlatforms[0].Color);
             finishLine = platformParent.Find("Finish Line").GetComponent<FinishLine>();
             finishLine.Init(levelManager);
         }
@@ -61,11 +63,11 @@ namespace ColorPlatform.Gameplay
 
         private void SetPlatformsActiveWith(PlatformColor color)
         {
-            currentPlatforms.ForEach(platform => platform.gameObject.SetActive(false));
+            currentPlatforms.ForEach(platform => platform.Deactivate());
             foreach (Platform platform in currentPlatforms)
             {
                 if (!platform.Color.Equals(color)) continue;
-                platform.gameObject.SetActive(true);
+                platform.Activate();
             }
         }
     }
