@@ -2,8 +2,9 @@ using UnityEngine;
 
 namespace ColorPlatform.Gameplay
 {
-    public class Platform : MonoBehaviour
+    [DisallowMultipleComponent]
+    public abstract class Platform : MonoBehaviour
     {
-        public PlatformColor Color = default;
+        public abstract PlatformColor Color { get; }
     }
 }

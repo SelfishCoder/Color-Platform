@@ -1,6 +1,7 @@
 using System;
-using ColorPlatform.Gameplay;
 using UnityEngine;
+using ColorPlatform.Gameplay;
+using CharacterController = ColorPlatform.Gameplay.CharacterController;
 
 namespace ColorPlatform.Management
 {
@@ -8,7 +9,12 @@ namespace ColorPlatform.Management
     {
         private GameState initialGameState = GameState.MainMenu;
         private GameState currentGameState = default;
+        private CharacterController characterController = default;
         private PlatformManager platformManager = default;
+        private LevelManager levelManager = default;
+        private UIManager uiManager = default;
+
+        public GameState CurrentGameState => currentGameState;
 
         public event Action<GameState> StateChanged;
 
@@ -24,9 +30,15 @@ namespace ColorPlatform.Management
 
         private void Init()
         {
-            platformManager = new PlatformManager();
+            characterController = FindObjectOfType<CharacterController>();
+            levelManager = new LevelManager(this);
+            platformManager = new PlatformManager(levelManager);
+            uiManager = new UIManager(this);
             
             platformManager.Init();
+            levelManager.Init();
+            uiManager.Init();
+            characterController.Init(this);
         }
 
         private void LateInit()
