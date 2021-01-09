@@ -45,6 +45,7 @@ namespace ColorPlatform.Gameplay
                 if (platform is null) continue;
                 currentPlatforms.Add(child.GetComponent<Platform>());
             }
+            currentPlatforms.ForEach(platform => platform.Init());
             SetPlatformsActiveWith(currentPlatforms[0].Color);
             finishLine = platformParent.Find("Finish Line").GetComponent<FinishLine>();
             finishLine.Init(levelManager);

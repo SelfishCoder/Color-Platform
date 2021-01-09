@@ -10,7 +10,7 @@ namespace ColorPlatform.Gameplay
         private MeshRenderer meshRenderer = default;
         public abstract PlatformColor Color { get; }
 
-        protected void Awake()
+        public virtual void Init()
         {
             colliderComponent = transform.GetChild(0).GetComponent<Collider>();
             meshRenderer = transform.GetChild(0).GetComponent<MeshRenderer>();
