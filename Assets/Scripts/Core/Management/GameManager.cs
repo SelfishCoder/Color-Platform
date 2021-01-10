@@ -13,6 +13,7 @@ namespace ColorPlatform.Management
         private PlatformManager platformManager = default;
         private LevelManager levelManager = default;
         private UIManager uiManager = default;
+        private CameraManager cameraManager = default;
 
         public GameState CurrentGameState => currentGameState;
 
@@ -31,14 +32,16 @@ namespace ColorPlatform.Management
         private void Init()
         {
             characterController = FindObjectOfType<CharacterController>();
+            cameraManager = new CameraManager();
             levelManager = new LevelManager(this);
             platformManager = new PlatformManager(this, levelManager);
             uiManager = new UIManager(this);
-            
+
+            cameraManager.Init();
             platformManager.Init();
             levelManager.Init();
             uiManager.Init();
-            characterController.Init(this);
+            characterController.Init(this, platformManager);
         }
 
         private void LateInit()

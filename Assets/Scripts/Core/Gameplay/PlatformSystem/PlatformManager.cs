@@ -9,21 +9,28 @@ namespace ColorPlatform.Gameplay
     {
         private static PlatformManager current;
         public static PlatformManager Current => current;
+        private int currentPlatformIndex = default;
         private LevelManager levelManager = default;
         private GameManager gameManager = default;
         private PlatformColor selectedColor = default;
         private List<Platform> currentPlatforms = default;
         private FinishLine finishLine = default;
 
+        public List<Platform> CurrentPlatforms => currentPlatforms;
+        public int CurrentPlatformIndex => currentPlatformIndex;
+        public FinishLine FinishLine => finishLine;
+        
         public event Action<PlatformColor> ColorChanged;
 
         private PlatformManager(){}
         
         public PlatformManager(GameManager currentGameManager, LevelManager currentLevelManager)
         {
+            this.gameManager = currentGameManager;
             this.levelManager = currentLevelManager;
+            levelManager.LevelLoaded += OnLevelLoaded;
         }
-        
+
         public void Init()
         {
             current = this;
@@ -57,6 +64,16 @@ namespace ColorPlatform.Gameplay
             ColorChanged?.Invoke(selectedColor);
         }
 
+        public Platform GetPlatform(int index)
+        {
+            return currentPlatforms[index];
+        }
+
+        public void OnPlatformPassed()
+        {
+            currentPlatformIndex++;
+        }
+        
         private void OnColorChanged(PlatformColor color)
         {
             SetPlatformsActiveWith(color);
@@ -70,6 +87,11 @@ namespace ColorPlatform.Gameplay
                 if (!platform.Color.Equals(color)) continue;
                 platform.Activate();
             }
+        }
+        
+        private void OnLevelLoaded(Level level)
+        {
+            currentPlatformIndex = 0;
         }
     }
 }
