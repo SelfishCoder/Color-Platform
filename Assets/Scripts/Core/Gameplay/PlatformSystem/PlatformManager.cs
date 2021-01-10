@@ -10,11 +10,13 @@ namespace ColorPlatform.Gameplay
         private static PlatformManager current;
         public static PlatformManager Current => current;
         private int currentPlatformIndex = default;
+        private float progress = default;
         private LevelManager levelManager = default;
         private GameManager gameManager = default;
         private PlatformColor selectedColor = default;
         private List<Platform> currentPlatforms = default;
         private FinishLine finishLine = default;
+        private CharacterController characterController = default;
 
         public List<Platform> CurrentPlatforms => currentPlatforms;
         public int CurrentPlatformIndex => currentPlatformIndex;
@@ -24,10 +26,11 @@ namespace ColorPlatform.Gameplay
 
         private PlatformManager(){}
         
-        public PlatformManager(GameManager currentGameManager, LevelManager currentLevelManager)
+        public PlatformManager(GameManager currentGameManager, LevelManager currentLevelManager, CharacterController currentCharacterController)
         {
             this.gameManager = currentGameManager;
             this.levelManager = currentLevelManager;
+            this.characterController = currentCharacterController;
             levelManager.LevelLoaded += OnLevelLoaded;
         }
 
@@ -93,5 +96,11 @@ namespace ColorPlatform.Gameplay
         {
             currentPlatformIndex = 0;
         }
+
+        public float GetProgress()
+        {
+            progress = (characterController.transform.position.z / finishLine.transform.position.z);
+            return progress;
+        } 
     }
 }

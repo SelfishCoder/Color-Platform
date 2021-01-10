@@ -33,7 +33,7 @@ namespace ColorPlatform.Gameplay
         public void Deactivate()
         {
             colliderComponent.enabled = false;
-            meshRenderer.sharedMaterial.DOFade(.6f, .25f).SetEase(Ease.InOutSine);
+            meshRenderer.sharedMaterial.DOFade(.5f, .25f).SetEase(Ease.InOutSine);
             IsActive = false;
         }
     }

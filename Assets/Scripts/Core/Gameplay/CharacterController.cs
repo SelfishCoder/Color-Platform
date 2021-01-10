@@ -1,8 +1,8 @@
 ﻿using System;
+using Extensions;
 using DG.Tweening;
 using UnityEngine;
 using ColorPlatform.Management;
-using Extensions;
 
 namespace ColorPlatform.Gameplay
 {
