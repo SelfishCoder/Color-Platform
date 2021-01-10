@@ -2,6 +2,7 @@
 using DG.Tweening;
 using UnityEngine;
 using ColorPlatform.Management;
+using Extensions;
 
 namespace ColorPlatform.Gameplay
 {
@@ -10,10 +11,13 @@ namespace ColorPlatform.Gameplay
     {
         [SerializeField, Range(0, 25f)] private float movementSpeed = default;
         [SerializeField, Range(0, 250f)] private float jumpForce = default;
+        private Vector3 movementDirection = default;
         private Rigidbody rigidbodyComponent = default;
         private Animator animator = default;
         private GameManager gameManager = default;
         private PlatformManager platformManager = default;
+        private TrailRenderer rightHandTrail = default;
+        private TrailRenderer leftHandTrail = default;
 
         public void Init(GameManager currentGameManager, PlatformManager currentPlatformManager)
         {
@@ -22,12 +26,23 @@ namespace ColorPlatform.Gameplay
             animator = GetComponent<Animator>();
             rigidbodyComponent = GetComponent<Rigidbody>();
             gameManager.StateChanged += OnGameStateChanged;
+            CacheTrailsAndSetInitialValues();
         }
 
+        private void CacheTrailsAndSetInitialValues()
+        {
+            rightHandTrail = transform.FindWithName($"Right Hand Trail").GetComponent<TrailRenderer>();
+            leftHandTrail = transform.FindWithName($"Left Hand Trail").GetComponent<TrailRenderer>();
+            rightHandTrail.startWidth = .1f;
+            rightHandTrail.endWidth = .025f;
+            leftHandTrail.startWidth = .1f;
+            leftHandTrail.endWidth = .025f;
+        }
+        
         private void Update()
         {
             if (gameManager.CurrentGameState != GameState.GamePlay) return;
-            Vector3 direction;
+            
             if (!rigidbodyComponent.useGravity)
             {
                 rigidbodyComponent.velocity = Vector3.zero;
@@ -36,20 +51,20 @@ namespace ColorPlatform.Gameplay
             {
                 if (rigidbodyComponent.useGravity)
                 {
-                    direction = platformManager.GetPlatform(platformManager.CurrentPlatformIndex).EndPoint.transform.position -
+                    movementDirection = platformManager.GetPlatform(platformManager.CurrentPlatformIndex).EndPoint.transform.position -
                         transform.position;
                 }
                 else
                 {
-                    direction = Vector3.forward;
+                    movementDirection = Vector3.forward;
                 }
             }
             else
             {
-                direction = platformManager.FinishLine.transform.position - transform.position;
+                movementDirection = platformManager.FinishLine.transform.position - transform.position;
             }
-            direction.y = 0;
-            transform.Translate(direction.normalized * (Time.deltaTime * movementSpeed));
+            movementDirection.y = 0;
+            transform.Translate(movementDirection.normalized * (Time.deltaTime * movementSpeed));
         }
         
         private void OnTriggerEnter(Collider other)
