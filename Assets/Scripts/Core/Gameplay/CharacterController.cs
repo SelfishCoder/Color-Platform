@@ -14,6 +14,7 @@ namespace ColorPlatform.Gameplay
         private Vector3 movementDirection = default;
         private Rigidbody rigidbodyComponent = default;
         private Animator animator = default;
+        private SkinnedMeshRenderer meshRenderer = default;
         private GameManager gameManager = default;
         private PlatformManager platformManager = default;
         private TrailRenderer rightHandTrail = default;
@@ -26,7 +27,10 @@ namespace ColorPlatform.Gameplay
             animator = GetComponent<Animator>();
             rigidbodyComponent = GetComponent<Rigidbody>();
             gameManager.StateChanged += OnGameStateChanged;
+            platformManager.ColorChanged += OnColorChanged;
+            meshRenderer = transform.FindWithName("Whiteman").GetComponent<SkinnedMeshRenderer>();
             CacheTrailsAndSetInitialValues();
+            SetColor(platformManager.SelectedColor);
         }
 
         private void CacheTrailsAndSetInitialValues()
@@ -93,20 +97,49 @@ namespace ColorPlatform.Gameplay
             Vector3 targetPosition = targetWallType == PlatformType.Straight ? 
                 targetPlatform.EndPoint.transform.position
                 : targetPlatform.StartPoint.transform.position;
+            transform.DOLookAt(targetPosition, .1f);
+            if (!targetPlatform.IsActive) return;
             rigidbodyComponent.useGravity = targetWallType == PlatformType.Straight;
             if (targetWallType != PlatformType.Straight)
             {
                 rigidbodyComponent.velocity = Vector3.zero;
             }
-            transform.DOLookAt(targetPosition, .1f);
         }
 
         private void OnHitPlatformStartPoint()
         {
             Platform targetPlatform = platformManager.GetPlatform(platformManager.CurrentPlatformIndex);
+            if (!targetPlatform.IsActive) return;
             PlatformType targetWallType = targetPlatform.PlatformType;
-            if (targetWallType == PlatformType.Wall) animator.SetBool($"IsWallRunning", true);
+            if (targetWallType == PlatformType.Wall)
+            {
+                animator.SetBool($"IsWallRunning", true);
+                rigidbodyComponent.useGravity = false;
+            }
             transform.DOLookAt(targetPlatform.EndPoint.transform.position, .1f);
+        }
+
+        private void SetColor(PlatformColor color)
+        {
+            switch (color)
+            {
+                case PlatformColor.Red:
+                    meshRenderer.sharedMaterial = Resources.Load<Material>($"Materials/Character/Red");
+                    break;
+                case PlatformColor.Green:
+                    meshRenderer.sharedMaterial = Resources.Load<Material>($"Materials/Character/Green");
+                    break;
+                case PlatformColor.Blue:
+                    meshRenderer.sharedMaterial = Resources.Load<Material>($"Materials/Character/Blue");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(color), color, null);
+            }
+        }
+        
+        private void OnColorChanged(PlatformColor color)
+        {
+            SetColor(color);
         }
         
         private void OnGameStateChanged(GameState gameState)

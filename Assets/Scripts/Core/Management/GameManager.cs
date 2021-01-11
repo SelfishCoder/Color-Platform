@@ -32,10 +32,10 @@ namespace ColorPlatform.Management
         private void Init()
         {
             characterController = FindObjectOfType<CharacterController>();
-            cameraManager = new CameraManager();
             levelManager = new LevelManager(this);
             platformManager = new PlatformManager(this, levelManager, characterController);
             uiManager = new UIManager(this);
+            cameraManager = new CameraManager(platformManager);
 
             cameraManager.Init();
             platformManager.Init();

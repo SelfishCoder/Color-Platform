@@ -21,6 +21,7 @@ namespace ColorPlatform.Gameplay
         public List<Platform> CurrentPlatforms => currentPlatforms;
         public int CurrentPlatformIndex => currentPlatformIndex;
         public FinishLine FinishLine => finishLine;
+        public PlatformColor SelectedColor => selectedColor;
         
         public event Action<PlatformColor> ColorChanged;
 
@@ -56,7 +57,7 @@ namespace ColorPlatform.Gameplay
                 currentPlatforms.Add(child.GetComponent<Platform>());
             }
             currentPlatforms.ForEach(platform => platform.Init());
-            SetPlatformsActiveWith(currentPlatforms[0].Color);
+            SetColor(currentPlatforms[0].Color);
             finishLine = platformParent.Find("Finish Line").GetComponent<FinishLine>();
             finishLine.Init(levelManager);
         }
